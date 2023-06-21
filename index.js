@@ -5,6 +5,8 @@ const postHandler = require("./methods/post-handler.js");
 const putHandler = require("./methods/put-handler.js");
 const deleteHandler = require("./methods/delete-handler.js");
 const patchHandler = require("./methods/patch-handler.js");
+const movies = require("./data/dummy-data.json");
+const { connectWithDatabase } = require("./configs/database-config.js");
 
 // All configs
 require("dotenv").config();
@@ -14,6 +16,7 @@ const PORT = process.env.APP_PORT;
 const HOST = process.env.APP_HOST;
 
 const server = http.createServer((req, res) => {
+  req.movies = movies;
   const { method } = req;
   switch (method) {
     case "GET":
@@ -47,8 +50,9 @@ const server = http.createServer((req, res) => {
 
 server
   .listen(PORT, () => {
-    console.log(`Server running at ${HOST}:${PORT}/`);
+    console.log(`Server running at ${HOST}:${PORT}`);
   })
+  .on("listening", connectWithDatabase)
   .on("error", (err) => {
     console.log("err", err);
   });
